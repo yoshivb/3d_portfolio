@@ -1,0 +1,80 @@
+{
+    "Title": "Yoshi van Belkom | Tech Lead | Gameplay Programmer ",
+    "Description": "It's my portfolio, look at how cool it is and how cool I am. Wow!",
+    "Games": [
+        {
+            "ImageRow": "./public/games/minimal-affect_tall.jpg",
+            "ImageColumn": "./public/games/minimal-affect_wide.jpg",
+            "Title": "Minimal Affect",
+            "Company": "Toadman Interactive",
+            "Role": "Tech Lead"
+        },
+        {
+            "ImageRow": "./public/games/evilevil_tall.jpg",
+            "ImageColumn": "./public/games/evilevil_wide.jpg",
+            "Title": "EvilvEvil",
+            "Company": "Toadman Interactive",
+            "Role": "Gameplay Programmer"
+        },
+        {
+            "ImageRow": "./public/games/interstellar-rift_tall.jpg",
+            "ImageColumn": "./public/games/interstellar-rift_wide.jpg",
+            "Title": "Interstellar Rift",
+            "Company": "Split Polygon",
+            "Role": "Tools Programmer"
+        }
+    ],
+    "Hobbies": [
+        {
+            "ImageRow": "./public/hobbies/sculpting_tall.jpg",
+            "ImageColumn": "./public/hobbies/sculpting_wide.jpg",
+            "Title": "Sculpting"
+        },
+        {
+            "ImageRow": "./public/hobbies/painting.jpg",
+            "ImageColumn": "./public/hobbies/painting.jpg",
+            "Title": "Painting"
+        },
+        {
+            "ImageRow": "./public/hobbies/gamedev-force_tall.jpg",
+            "ImageColumn": "./public/hobbies/gamedev-force_wide.jpg",
+            "Title": "GameDev Force"
+        },
+        {
+            "ImageRow": "./public/hobbies/baking.jpg",
+            "ImageColumn": "./public/hobbies/baking.jpg",
+            "Title": "Baking/Cooking"
+        }
+    ],
+    "Sections": [
+        "Intro",
+        "Games",
+        "Pastimes",
+        "Contact"
+    ],
+    "Portrait": "./public/portrait_drawing.png",
+    "Name": "Yoshi van Belkom",
+    "PrimaryRole": "Tech Lead",
+    "SecondaryRole": "Gameplay Programmer",
+    "ContactHeaders": [
+        "Feel free to reach out to me throught the channels linked here!",
+        "Things worthy of note:"
+    ],
+    "ContactNotes": [
+        "I do read all the emails and messages sent to me, even if I don't always have the time to respond.",
+        "Please don't invite me for a phone meeting, cause I will not respond to them.",
+        "If you are adding me on linkedin please add a message so I know why you are adding me!"
+    ],
+    "ContactLinks": [
+        {
+            "Link": "https://linkedin.com/in/yoshivanbelkom",
+            "Icon": "fa-brands fa-linkedin",
+            "Title": "yoshivanbelkom"
+        },
+        {
+            "Link": "mailto:contact@yoshivanbelkom.com",
+            "Icon": "fa-solid fa-square-envelope",
+            "Title": "contact@yoshivanbelkom.com"
+        }
+    ]
+}

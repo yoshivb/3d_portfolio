@@ -1,0 +1,33 @@
+:root 
+{
+    --main-text-color: rgb(232, 224, 224);
+    --main-bg-color: #262626;
+    --darker-bg-color: #1a1a1a;
+    --darker-transparent-bg-color: #1a1a1aa1;
+    --link-text-color: #F54D4D;
+    --text-shadow-color: rgba(0, 0, 1.0);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.app{
+    position: fixed;
+    width: 100vw;
+    height: 100vw;
+    background-color: black;
+}
+
+.app-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app-canvas{
+    width: 100%;
+    height: 100%;
+}

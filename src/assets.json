@@ -1,0 +1,24 @@
+{
+    "models": {
+        "floor": {
+            "path": "public/models/CubeRoom_Floor.glb",
+            "normal": {"x": 0, "y": 1, "z": 0}
+        },
+        "games": {
+            "path": "public/models/CubeRoom_Game.glb",
+            "normal": {"x": 1, "y": 0, "z": 0}
+        },
+        "hobbies": {
+            "path": "public/models/CubeRoom_Hobby.glb",
+            "normal": {"x": 0, "y": 0, "z": 1}
+        },
+        "volunteer": {
+            "path": "public/models/CubeRoom_Volunteer.glb",
+            "normal": {"x": -1, "y": 0, "z": 0}
+        },
+        "contact": {
+            "path": "public/models/CubeRoom_Contact.glb",
+            "normal": {"x": 0, "y": 0, "z": -1}
+        }
+    }
+}
