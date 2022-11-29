@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { Scene } from './scene';
 
 //Todo: calc this
-const width = 25;
-const height = 25;
+const width = 20;
+const height = 20;
 const offsetY = 4;
 
 export class Camera 
@@ -22,7 +22,7 @@ export class Camera
 
         this.scene.addObject(this.camera);
 
-        this.scene.directionalLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+        this.scene.directionalLight.position.set(this.camera.position.x, this.camera.position.y + 4, this.camera.position.z);
     }
 
     public getDirection(): THREE.Vector3

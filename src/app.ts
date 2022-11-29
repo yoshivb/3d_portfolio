@@ -4,6 +4,7 @@ import { Camera } from './camera';
 import { Renderer } from './renderer'
 import { Room } from './room';
 import { Scene } from './scene';
+import { SpinControls, SpinChangedEvent } from './SpinControls';
 
 export class App 
 {
@@ -12,6 +13,7 @@ export class App
     scene: Scene;
     camera: Camera;
     assetImporter: AssetImporter;
+    spinControls: SpinControls;
 
     //todo Move into other class
     gamesRoom: Room;
@@ -30,6 +32,9 @@ export class App
         this.renderer = new Renderer(canvas);
         this.scene = new Scene();
         this.camera = new Camera(this.scene);
+        this.spinControls = new SpinControls(document.body);
+        this.spinControls.enableDamping = true;
+        this.spinControls.addEventListener("changed", (ev) => this.onRotate(ev));
         
         this.renderer.scene = this.scene.scene;
         this.renderer.camera = this.camera.camera;
@@ -67,8 +72,18 @@ export class App
             this.hobbyRoom.tick(dt);
             this.volunteerRoom.tick(dt);
             this.contactRoom.tick(dt);
+            this.spinControls.update();
         }
 
         this.previousTimestamp = currentTime;
+    }
+
+    private onRotate(event: SpinChangedEvent)
+    {
+        this.floor.setRotation(event.theta);
+        this.gamesRoom.setRotation(event.theta);
+        this.hobbyRoom.setRotation(event.theta);
+        this.volunteerRoom.setRotation(event.theta);
+        this.contactRoom.setRotation(event.theta);
     }
 }

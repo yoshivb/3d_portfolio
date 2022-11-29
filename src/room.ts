@@ -41,7 +41,7 @@ export class Room
         if(this.mainGroup !== undefined)
         {
             let object = this.mainGroup as THREE.Object3D;
-            object.rotateY(dt*0.0003);
+            // object.rotateY(dt*0.0003);
 
             let curNormal = this.normal.clone();
             curNormal.applyEuler(object.rotation);
@@ -59,6 +59,15 @@ export class Room
             {
                 object.visible = false;
             }
+        }
+    }
+
+    public setRotation(rotation: number)
+    {
+        if(this.mainGroup !== undefined)
+        {
+            let object = this.mainGroup as THREE.Object3D;
+            object.rotation.y = rotation;
         }
     }
 }

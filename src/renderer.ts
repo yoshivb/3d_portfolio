@@ -17,8 +17,9 @@ export class Renderer
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
 
-        //todo: bettor
-        this.renderer.setSize( window.innerHeight, window.innerHeight );
+        //todo: add resizing support
+        let smallestValue = Math.min(window.innerHeight, window.innerWidth);
+        this.renderer.setSize( smallestValue, smallestValue );
 
         this.callbacks = [];
     }

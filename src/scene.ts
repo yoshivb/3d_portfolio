@@ -11,25 +11,25 @@ export class Scene
         this.scene = new THREE.Scene();
 
         //init ambientlight
-        this.ambientLight = new THREE.AmbientLight( 0x555555 );
+        this.ambientLight = new THREE.AmbientLight( 0xffffff, 0.9 );
         this.scene.add( this.ambientLight  );
 
         //init directionallight
-        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
+        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.3 );
         this.directionalLight.castShadow = true; 
         this.scene.add( this.directionalLight );
 
         //Todo: needs calcing
-        this.directionalLight.shadow.camera.left = -25;
-        this.directionalLight.shadow.camera.bottom = -25;
-        this.directionalLight.shadow.camera.top = 25;
-        this.directionalLight.shadow.camera.right = 25;
+        this.directionalLight.shadow.camera.left = -20;
+        this.directionalLight.shadow.camera.bottom = -20;
+        this.directionalLight.shadow.camera.top = 20;
+        this.directionalLight.shadow.camera.right = 20;
 
-        this.directionalLight.shadow.mapSize.width = 1024;
-        this.directionalLight.shadow.mapSize.height = 1024;
+        this.directionalLight.shadow.mapSize.width = 2048;
+        this.directionalLight.shadow.mapSize.height = 2048;
         this.directionalLight.shadow.camera.near = 1; 
         this.directionalLight.shadow.camera.far = 100; 
-        this.directionalLight.shadow.normalBias = 0.1;
+        this.directionalLight.shadow.normalBias = 0.03;
     }
 
     public addObject(object: THREE.Object3D)
