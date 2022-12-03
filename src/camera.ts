@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { Scene } from './scene';
 
-//Todo: calc this
-const width = 20;
-const height = 20;
+const width = 17;
+const height = 17;
 const offsetY = 4;
 
 export class Camera 

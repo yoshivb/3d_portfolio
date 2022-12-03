@@ -11,19 +11,18 @@ export class Scene
         this.scene = new THREE.Scene();
 
         //init ambientlight
-        this.ambientLight = new THREE.AmbientLight( 0xffffff, 0.9 );
+        this.ambientLight = new THREE.AmbientLight( 0xffffff, 0.5 );
         this.scene.add( this.ambientLight  );
 
         //init directionallight
-        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.3 );
+        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
         this.directionalLight.castShadow = true; 
         this.scene.add( this.directionalLight );
 
-        //Todo: needs calcing
-        this.directionalLight.shadow.camera.left = -20;
-        this.directionalLight.shadow.camera.bottom = -20;
-        this.directionalLight.shadow.camera.top = 20;
-        this.directionalLight.shadow.camera.right = 20;
+        this.directionalLight.shadow.camera.left = -10;
+        this.directionalLight.shadow.camera.bottom = -10;
+        this.directionalLight.shadow.camera.top = 10;
+        this.directionalLight.shadow.camera.right = 10;
 
         this.directionalLight.shadow.mapSize.width = 2048;
         this.directionalLight.shadow.mapSize.height = 2048;

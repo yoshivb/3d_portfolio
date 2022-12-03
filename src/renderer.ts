@@ -16,12 +16,24 @@ export class Renderer
         this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: canvas});
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
 
-        //todo: add resizing support
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.toneMapping = THREE.CineonToneMapping;
+        this.renderer.toneMappingExposure = 1.5;
+
         let smallestValue = Math.min(window.innerHeight, window.innerWidth);
         this.renderer.setSize( smallestValue, smallestValue );
 
+        window.addEventListener("resize", (ev) => this.onResize(ev));
+
         this.callbacks = [];
+    }
+
+    private onResize(event: UIEvent)
+    {
+        let smallestValue = Math.min(window.innerHeight, window.innerWidth);
+        this.renderer.setSize( smallestValue, smallestValue );
     }
 
     public addTick(callback: FrameRequestCallback)
