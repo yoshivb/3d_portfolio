@@ -4,7 +4,7 @@ import { Camera } from './camera';
 import { Renderer } from './renderer'
 import { Room } from './room';
 import { Scene } from './scene';
-import { SpinControls, SpinChangedEvent } from './SpinControls';
+import { SpinControls, SpinChangedEvent } from './spincontrols';
 
 export class App 
 {

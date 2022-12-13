@@ -38,6 +38,10 @@ module.exports = env =>
           test: /\.ts$/,
           exclude: /node_modules/,
           loader: 'ts-loader'
+        },
+        {
+          test: /\.(glsl|vs|fs)$/,
+          loader: 'ts-shader-loader'
         }
       ]
     },

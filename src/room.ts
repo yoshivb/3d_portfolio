@@ -3,7 +3,8 @@ import { Camera } from './camera';
 import { AssetImporter } from './assetimporter';
 import { models } from './assets.json'
 import { Model } from './model';
-import {remap} from './math'
+import { MainMaterial } from './mainmaterial';
+import { Clickable } from './clickable';
 
 type ModelKey = keyof typeof models;
 
@@ -13,6 +14,8 @@ export class Room
     assetImporter: AssetImporter;
     mainGroup: THREE.Object3D | undefined;
     id: ModelKey;
+
+    clickables: Clickable[];
     normal: THREE.Vector3;
 
     constructor(id: ModelKey, assetImporter: AssetImporter, camera: Camera)
@@ -21,6 +24,7 @@ export class Room
         this.assetImporter = assetImporter;
         this.id = id;
         this.mainGroup = undefined;
+        this.clickables = [];
 
         let modelInfo = models[id] as Model;
         this.normal = new THREE.Vector3(modelInfo.normal.x, modelInfo.normal.y, modelInfo.normal.z);
@@ -31,9 +35,54 @@ export class Room
         this.assetImporter.loadModel(this.id, (grp) => this.onLoaded(grp));
     }
 
+    private getMaterial(curMaterial: THREE.Material): THREE.ShaderMaterial
+    {
+        return new MainMaterial(curMaterial);
+    }
+
     private onLoaded(asset: THREE.Group)
     {
         this.mainGroup = asset;
+
+        if(this.id != "floor")
+        {
+            let modelInfo = models[this.id] as Model;
+
+            let clickableMeshes: THREE.Mesh[] = [];
+
+            this.mainGroup.traverse((obj) =>
+            {
+                let mesh = obj as THREE.Mesh;
+                if(mesh && mesh.isMesh)
+                {
+                    let foundClickable = modelInfo.clickables.find((obj) => obj.name == mesh.name);
+
+                    if(foundClickable != undefined)
+                    {
+                        clickableMeshes.push(mesh);
+                    }
+
+                    if(Array.isArray(mesh.material))
+                    {
+                        for(let i = 0; i < mesh.material.length; i++)
+                        {
+                            mesh.material[i] = this.getMaterial(mesh.material[i]);
+                        }
+                    }
+                    else
+                    {
+                        mesh.material = this.getMaterial(mesh.material);
+                    }
+                }
+            });
+
+            for(let mesh of clickableMeshes)
+            {
+                let foundClickable = modelInfo.clickables.find((obj) => obj.name == mesh.name);
+                if(foundClickable)
+                    this.clickables.push(new Clickable(foundClickable, mesh));
+            }
+        }
     }
 
     public tick(dt: DOMHighResTimeStamp)
