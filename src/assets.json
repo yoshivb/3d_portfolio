@@ -23,12 +23,29 @@
         "hobbies": {
             "path": "public/models/CubeRoom_Hobby.glb",
             "normal": {"x": 0, "y": 0, "z": 1},
-            "clickables": []
+            "clickables": [
+                {
+                    "name": "BustSculpt"
+                },
+                {
+                    "name": "Painting"
+                },
+                {
+                    "name": "ServingTray"
+                }
+            ]
         },
         "volunteer": {
             "path": "public/models/CubeRoom_Volunteer.glb",
             "normal": {"x": -1, "y": 0, "z": 0},
-            "clickables": []
+            "clickables": [
+                {
+                    "name": "QueerArtFest"
+                },
+                {
+                    "name": "IndieGameBookClub"
+                }
+            ]
         },
         "contact": {
             "path": "public/models/CubeRoom_Contact.glb",

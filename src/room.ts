@@ -48,20 +48,20 @@ export class Room
         {
             let modelInfo = models[this.id] as Model;
 
-            let clickableMeshes: THREE.Mesh[] = [];
+            let clickableObjects: THREE.Object3D[] = [];
 
             this.mainGroup.traverse((obj) =>
             {
+                let foundClickable = modelInfo.clickables.find((clickable) => obj.name == clickable.name);
+
+                if(foundClickable != undefined)
+                {
+                    clickableObjects.push(obj);
+                }
+
                 let mesh = obj as THREE.Mesh;
                 if(mesh && mesh.isMesh)
                 {
-                    let foundClickable = modelInfo.clickables.find((obj) => obj.name == mesh.name);
-
-                    if(foundClickable != undefined)
-                    {
-                        clickableMeshes.push(mesh);
-                    }
-
                     if(Array.isArray(mesh.material))
                     {
                         for(let i = 0; i < mesh.material.length; i++)
@@ -76,11 +76,11 @@ export class Room
                 }
             });
 
-            for(let mesh of clickableMeshes)
+            for(let object of clickableObjects)
             {
-                let foundClickable = modelInfo.clickables.find((obj) => obj.name == mesh.name);
+                let foundClickable = modelInfo.clickables.find((clickable) => clickable.name == object.name);
                 if(foundClickable)
-                    this.clickables.push(new Clickable(foundClickable, mesh));
+                    this.clickables.push(new Clickable(foundClickable, object));
             }
         }
     }
@@ -98,14 +98,29 @@ export class Room
             let cameraDir = this.camera.getDirection();
             let dotValue = cameraDir.dot(curNormal);
 
+            let areClickablesVisible = false;
             if(dotValue > 0)
             {
                 object.visible = true;
-                //todo: dither object to fade out
+                
+                if(dotValue < 0.2)
+                {
+                    areClickablesVisible = false;
+                }
+                else
+                {
+                    areClickablesVisible = true;
+                }
             }
             else
             {
                 object.visible = false;
+                areClickablesVisible = false;
+            }
+
+            for(let clickable of this.clickables)
+            {
+                clickable.updateVisibility(areClickablesVisible);
             }
         }
     }

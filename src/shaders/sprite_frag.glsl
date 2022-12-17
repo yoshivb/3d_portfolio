@@ -1,6 +1,8 @@
 #include <common>
 #include <uv_pars_fragment>
 
+uniform float opacity;
+
 void main() {
 	vec3 diffuseColor = vec3( 1.0, 0.0, 0.0 );
 
@@ -11,5 +13,5 @@ void main() {
 	float finalValue = value < 0.7 ? 0.9 : 0.0;
 	diffuseColor = vec3(finalValue);
 
-	gl_FragColor = vec4( diffuseColor, value <= 1.0 ? 1.0 : 0.0);
+	gl_FragColor = vec4( diffuseColor, value <= 1.0 ? opacity : 0.0);
 }   

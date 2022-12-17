@@ -35,7 +35,7 @@ export class App
         this.spinControls = new SpinControls(document.body);
         this.spinControls.enableDamping = true;
         this.spinControls.addEventListener("changed", (ev) => this.onRotate(ev));
-        
+
         this.renderer.scene = this.scene.scene;
         this.renderer.camera = this.camera.camera;
         this.renderer.addTick((time) => this.tick(time));
