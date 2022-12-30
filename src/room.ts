@@ -89,38 +89,34 @@ export class Room
     {
         if(this.mainGroup !== undefined)
         {
-            let object = this.mainGroup as THREE.Object3D;
+            let object = this.mainGroup;
 
-            let curNormal = this.normal.clone();
-            curNormal.applyEuler(object.rotation);
-            curNormal.multiplyScalar(-1);
-            
-            let cameraDir = this.camera.getDirection();
-            let dotValue = cameraDir.dot(curNormal);
-
-            let areClickablesVisible = false;
-            if(dotValue > 0)
+            if(this.camera.hasTarget())
             {
-                object.visible = true;
-                
-                if(dotValue < 0.2)
-                {
-                    areClickablesVisible = false;
-                }
-                else
-                {
-                    areClickablesVisible = true;
-                }
+                object.visible = this.camera.currentTarget == this;
             }
             else
             {
-                object.visible = false;
-                areClickablesVisible = false;
-            }
+                let curNormal = this.normal.clone();
+                curNormal.applyEuler(object.rotation);
+                curNormal.multiplyScalar(-1);
+                
+                let cameraDir = this.camera.getDirection();
+                let dotValue = cameraDir.dot(curNormal);
 
-            for(let clickable of this.clickables)
-            {
-                clickable.updateVisibility(areClickablesVisible);
+                if(dotValue > 0)
+                {
+                    object.visible = true;
+                }
+                else
+                {
+                    object.visible = false;
+                }
+
+                for(let clickable of this.clickables)
+                {
+                    clickable.tick(dt);
+                }
             }
         }
     }
@@ -129,8 +125,17 @@ export class Room
     {
         if(this.mainGroup !== undefined)
         {
-            let object = this.mainGroup as THREE.Object3D;
-            object.rotation.y = rotation;
+            this.mainGroup.rotation.y = rotation;
         }
+    }
+
+    public getOffsetRotation(): number
+    {
+        if(this.mainGroup !== undefined)
+        {
+            let offset = Math.atan2(this.normal.z, this.normal.x);
+            return offset;
+        }
+        return 0;
     }
 }

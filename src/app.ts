@@ -15,7 +15,7 @@ export class App
     assetImporter: AssetImporter;
     spinControls: SpinControls;
 
-    //todo Move into other class
+    //Maybe move into other class?
     gamesRoom: Room;
     hobbyRoom: Room;
     volunteerRoom: Room;
@@ -47,6 +47,32 @@ export class App
         this.volunteerRoom = new Room( "volunteer", this.assetImporter, this.camera);
         this.contactRoom = new Room("contact", this.assetImporter, this.camera);
         this.floor = new Room("floor", this.assetImporter, this.camera);
+
+        window.addEventListener("keydown", (ev) => this.onKeyDown(ev));
+    }
+
+    public onKeyDown(ev: KeyboardEvent)
+    {
+        if(ev.key == "0")
+        {
+            this.unfocusRoom();
+        }
+        else if(ev.key == "1")
+        {
+            this.focusRoom(this.gamesRoom);
+        }
+        else if(ev.key == "2")
+        {
+            this.focusRoom(this.hobbyRoom);
+        }
+        else if(ev.key == "3")
+        {
+            this.focusRoom(this.volunteerRoom);
+        }
+        else if(ev.key == "4")
+        {
+            this.focusRoom(this.contactRoom);
+        }
     }
 
     public start()
@@ -61,13 +87,12 @@ export class App
 
     public tick(currentTime: DOMHighResTimeStamp)
     {
-        let dt = currentTime - this.previousTimestamp;
+        let dt = (currentTime - this.previousTimestamp)/1000;
         
-        //Todo make a proper loading manager
+        //Maybe make a proper loading manager?
         let allLoaded = this.floor.mainGroup !== undefined && this.gamesRoom.mainGroup !== undefined && this.hobbyRoom.mainGroup !== undefined && this.volunteerRoom.mainGroup !== undefined && this.contactRoom.mainGroup !== undefined;
         if(allLoaded)
         {
-            this.floor.tick(dt);
             this.gamesRoom.tick(dt);
             this.hobbyRoom.tick(dt);
             this.volunteerRoom.tick(dt);
@@ -75,11 +100,34 @@ export class App
             this.spinControls.update();
         }
 
+        this.camera.tick(dt);
+
         this.previousTimestamp = currentTime;
+    }
+
+    public focusRoom(room: Room)
+    {
+        this.camera.setTarget(room);
+        this.spinControls.enabled = false;
+
+        //proof-of-concept
+        let theta = -35 * THREE.MathUtils.DEG2RAD + room.getOffsetRotation(); //A small offset looks nice
+        this.floor.setRotation(theta);
+        this.gamesRoom.setRotation(theta);
+        this.hobbyRoom.setRotation(theta);
+        this.volunteerRoom.setRotation(theta);
+        this.contactRoom.setRotation(theta);
+    }
+
+    public unfocusRoom()
+    {
+        this.camera.setTarget(null);
+        this.spinControls.enabled = true;
     }
 
     private onRotate(event: SpinChangedEvent)
     {
+        if(!this.spinControls.enabled) return;
         this.floor.setRotation(event.theta);
         this.gamesRoom.setRotation(event.theta);
         this.hobbyRoom.setRotation(event.theta);

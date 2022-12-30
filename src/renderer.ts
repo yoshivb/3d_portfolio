@@ -50,10 +50,14 @@ export class Renderer
         this.renderer.setSize( smallestValue, smallestValue );
     }
 
-    private onPointerMove(event: PointerEvent ) {
-   
-        this.pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        this.pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    private onPointerMove(event: PointerEvent ) 
+    {
+        let canvasBounds = this.canvas.getBoundingClientRect();
+        let windowX = event.clientX - canvasBounds.x;
+        let windowY = event.clientY - canvasBounds.y;
+        
+        this.pointer.x = (windowX / canvasBounds.width) * 2 - 1;
+        this.pointer.y = - (windowY / canvasBounds.width) * 2 + 1;
     }
 
     public addTick(callback: FrameRequestCallback)
@@ -110,7 +114,6 @@ export class Renderer
                     }
                 });
             }
-            console.log(newHoveringGroup);
             if(this.hoveringGroup != newHoveringGroup)
             {
                 if(this.hoveringGroup != null)
