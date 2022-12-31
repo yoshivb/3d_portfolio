@@ -49,6 +49,11 @@ export class Camera
         return vector;
     }
 
+    public isInTransition(): boolean
+    {
+        return this.transitionTime < this.transitionDuration;
+    }
+
     public hasTarget(): boolean
     {
         return this.currentTarget != null;

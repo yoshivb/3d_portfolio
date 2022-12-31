@@ -5,6 +5,7 @@ import { Renderer } from './renderer'
 import { Room } from './room';
 import { Scene } from './scene';
 import { SpinControls, SpinChangedEvent } from './spincontrols';
+import * as ExtraMath from './helpers/math'
 
 export class App 
 {
@@ -24,9 +25,18 @@ export class App
 
     previousTimestamp: DOMHighResTimeStamp;
 
+    transitionDuration: number = 1;
+    transitionTime: number = 0;
+
+    startRotation: number = 0;
+    targetRotation: number = 0;
+    currentRotation: number = 0;
+    storedRotation: number = 0;
+
     constructor(canvas: HTMLCanvasElement)
     {
         this.previousTimestamp = 0;
+        this.transitionTime = this.transitionDuration;
 
         this.canvas = canvas;
         this.renderer = new Renderer(canvas);
@@ -101,6 +111,14 @@ export class App
         }
 
         this.camera.tick(dt);
+        if(this.transitionTime < this.transitionDuration)
+        {
+            this.transitionTime += dt;
+            let t = Math.min(this.transitionTime / this.transitionDuration, 1.0);
+    
+            let rotation = ExtraMath.lerpAngle(this.startRotation, this.targetRotation, t);
+            this.setRotation(rotation);
+        }
 
         this.previousTimestamp = currentTime;
     }
@@ -110,8 +128,29 @@ export class App
         this.camera.setTarget(room);
         this.spinControls.enabled = false;
 
-        //proof-of-concept
         let theta = -35 * THREE.MathUtils.DEG2RAD + room.getOffsetRotation(); //A small offset looks nice
+
+        this.targetRotation = theta;
+        this.startRotation = this.currentRotation;
+        this.currentRotation = this.targetRotation;
+
+        this.transitionTime = 0;
+    }
+
+    public unfocusRoom()
+    {
+        this.camera.setTarget(null);
+        this.spinControls.enabled = true;
+
+        this.targetRotation = this.storedRotation;
+        this.startRotation = this.currentRotation;
+        this.currentRotation = this.targetRotation;
+
+        this.transitionTime = 0;
+    }
+
+    private setRotation(theta: number)
+    {
         this.floor.setRotation(theta);
         this.gamesRoom.setRotation(theta);
         this.hobbyRoom.setRotation(theta);
@@ -119,19 +158,12 @@ export class App
         this.contactRoom.setRotation(theta);
     }
 
-    public unfocusRoom()
-    {
-        this.camera.setTarget(null);
-        this.spinControls.enabled = true;
-    }
-
     private onRotate(event: SpinChangedEvent)
     {
         if(!this.spinControls.enabled) return;
-        this.floor.setRotation(event.theta);
-        this.gamesRoom.setRotation(event.theta);
-        this.hobbyRoom.setRotation(event.theta);
-        this.volunteerRoom.setRotation(event.theta);
-        this.contactRoom.setRotation(event.theta);
+
+        this.setRotation(event.theta);
+        this.currentRotation = event.theta;
+        this.storedRotation = event.theta;
     }
 }

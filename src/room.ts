@@ -91,7 +91,7 @@ export class Room
         {
             let object = this.mainGroup;
 
-            if(this.camera.hasTarget())
+            if(this.camera.hasTarget() && !this.camera.isInTransition())
             {
                 object.visible = this.camera.currentTarget == this;
             }
@@ -104,7 +104,9 @@ export class Room
                 let cameraDir = this.camera.getDirection();
                 let dotValue = cameraDir.dot(curNormal);
 
-                if(dotValue > 0)
+                let threshold = this.camera.isInTransition() ? 0.2 : 0;
+
+                if(dotValue > threshold)
                 {
                     object.visible = true;
                 }
