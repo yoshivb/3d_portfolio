@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { SpriteMaterial } from './spritematerial';
 
 export interface IClickable
 {
@@ -21,15 +20,13 @@ function easeOutElastic(x: number): number {
     }
 }
 
-export class Clickable 
+export class Clickable extends THREE.EventDispatcher
 {
     name: string;
-    private visible: boolean;
     refobject: THREE.Object3D;
     
-    plane: THREE.Mesh|null;
-    scene: THREE.Scene|null;
-    material: THREE.Material|null;
+    private scene: THREE.Scene|null;
+    private collisionBox: THREE.Box3|null;
 
     private isHovered: boolean;
     interpDuration: number;
@@ -37,12 +34,14 @@ export class Clickable
 
     constructor(data: IClickable, refmesh: THREE.Object3D)
     {
+        super();
+
         this.name = data.name;
-        this.visible = true;
+
         this.refobject = refmesh;
-        this.plane = null;
         this.scene = null;
-        this.material = null;
+        this.collisionBox = null;
+
         this.isHovered = false;
         this.interpDuration = 0.4;
         this.interpTime = this.interpDuration;
@@ -61,18 +60,16 @@ export class Clickable
 
         if(this.scene != null)
         {
-            this.refobject.layers.enable(1);
-            this.refobject.traverse((obj) => obj.layers.enable(1));
+            this.collisionBox = new THREE.Box3().setFromObject( this.refobject );
 
-            let geometry = new THREE.PlaneGeometry(0.3, 0.3);
-            this.material = new SpriteMaterial();
-            this.material.opacity = 0.5;
-            this.plane = new THREE.Mesh(geometry, this.material);
-            //this.refobject.add(this.plane);
-
-            this.refobject.addEventListener("onhoverstart", () => this.onHoverStart());
-            this.refobject.addEventListener("onhoverstop", () => this.onHoverStop());
+            this.addEventListener("onhoverstart", () => this.onHoverStart());
+            this.addEventListener("onhoverstop", () => this.onHoverStop());
         }
+    }
+
+    public getCollisionBox(): THREE.Box3|null
+    {
+        return this.collisionBox;
     }
 
     public tick(dt: DOMHighResTimeStamp)
@@ -92,6 +89,11 @@ export class Clickable
             let value = (t * 0.2) + 1.0;
 
             this.refobject.scale.set(value, value, value);
+        }
+
+        if(this.refobject)
+        {
+            this.collisionBox?.setFromObject(this.refobject);
         }
     }
 

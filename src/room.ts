@@ -5,6 +5,7 @@ import { models } from './assets.json'
 import { Model } from './model';
 import { MainMaterial } from './mainmaterial';
 import { Clickable } from './clickable';
+import { FocusManager } from './focusmanager';
 
 type ModelKey = keyof typeof models;
 
@@ -18,6 +19,11 @@ export class Room
     clickables: Clickable[];
     normal: THREE.Vector3;
 
+    isVisible: boolean = true;
+    alwaysVisible: boolean = false;
+
+    focusManager: FocusManager|null;
+
     constructor(id: ModelKey, assetImporter: AssetImporter, camera: Camera)
     {       
         this.camera = camera;
@@ -25,9 +31,19 @@ export class Room
         this.id = id;
         this.mainGroup = undefined;
         this.clickables = [];
+        this.focusManager = null;
 
         let modelInfo = models[id] as Model;
         this.normal = new THREE.Vector3(modelInfo.normal.x, modelInfo.normal.y, modelInfo.normal.z);
+        if(modelInfo.alwaysVisible)
+        {
+            this.alwaysVisible = true;
+        }
+    }
+
+    public setFocusManager(focusManager: FocusManager)
+    {
+        this.focusManager = focusManager;
     }
 
     public load()
@@ -80,7 +96,11 @@ export class Room
             {
                 let foundClickable = modelInfo.clickables.find((clickable) => clickable.name == object.name);
                 if(foundClickable)
-                    this.clickables.push(new Clickable(foundClickable, object));
+                {
+                    let clickable = new Clickable(foundClickable, object);
+                    clickable.addEventListener("onclick", () => this.onClickClickable(clickable));
+                    this.clickables.push(clickable);
+                }
             }
         }
     }
@@ -91,34 +111,42 @@ export class Room
         {
             let object = this.mainGroup;
 
-            if(this.camera.hasTarget() && !this.camera.isInTransition())
+            if(this.alwaysVisible)
             {
-                object.visible = this.camera.currentTarget == this;
+                this.isVisible = true;
             }
             else
             {
-                let curNormal = this.normal.clone();
-                curNormal.applyEuler(object.rotation);
-                curNormal.multiplyScalar(-1);
-                
-                let cameraDir = this.camera.getDirection();
-                let dotValue = cameraDir.dot(curNormal);
-
-                let threshold = this.camera.isInTransition() ? 0.2 : 0;
-
-                if(dotValue > threshold)
+                if(this.camera.hasTarget() && !this.camera.isInTransition())
                 {
-                    object.visible = true;
+                    this.isVisible = this.camera.currentTarget == this;
                 }
                 else
                 {
-                    object.visible = false;
+                    let curNormal = this.normal.clone();
+                    curNormal.applyEuler(object.rotation);
+                    curNormal.multiplyScalar(-1);
+                    
+                    let cameraDir = this.camera.getDirection();
+                    let dotValue = cameraDir.dot(curNormal);
+                    
+                    let threshold = this.camera.isInTransition() ? 0.2 : 0;
+                    
+                    if(dotValue > threshold)
+                    {
+                        this.isVisible = true;
+                    }
+                    else
+                    {
+                        this.isVisible = false;
+                    }
                 }
+            }
+            object.visible = this.isVisible;
 
-                for(let clickable of this.clickables)
-                {
-                    clickable.tick(dt);
-                }
+            for(let clickable of this.clickables)
+            {
+                clickable.tick(dt);
             }
         }
     }
@@ -139,5 +167,23 @@ export class Room
             return offset;
         }
         return 0;
+    }
+
+    private onClickClickable(clickable: Clickable)
+    {
+        if(this.focusManager == null) return;
+
+        if(this.focusManager.focusedObject == null)
+        {
+            this.focusManager.focus(this);
+        }
+        else if (this.focusManager.focusedObject == this)
+        {
+            this.focusManager.focus(clickable);
+        }
+        else if (this.focusManager.focusedObject instanceof Clickable)
+        {
+            this.focusManager.focus(null);
+        }
     }
 }

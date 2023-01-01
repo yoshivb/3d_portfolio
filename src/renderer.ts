@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { Clickable } from './clickable';
+import { Room } from './room';
+import { RoomManager } from './roommanager';
 
 export class Renderer 
 {
@@ -9,12 +12,12 @@ export class Renderer
     camera: THREE.Camera | undefined;
     raycaster: THREE.Raycaster | undefined;
 
+    roomManager: RoomManager|null;
+
     pointer: THREE.Vector2;
-    hoveringObject: THREE.Object3D | null;
-    hoveringGroup: THREE.Group | null;
+    hoveringObject: Clickable | null;
 
     callbacks: FrameRequestCallback[];
-
     constructor(canvas: HTMLCanvasElement)
     {
         this.canvas = canvas;
@@ -28,10 +31,11 @@ export class Renderer
         this.renderer.toneMappingExposure = 1.5;
 
         this.hoveringObject = null;
-        this.hoveringGroup = null;
         this.pointer = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
         this.raycaster.layers.set(1);
+
+        this.roomManager = null;
 
         let smallestValue = Math.min(window.innerHeight, window.innerWidth);
         this.renderer.setSize( smallestValue, smallestValue );
@@ -39,15 +43,30 @@ export class Renderer
         window.addEventListener("resize", (ev) => this.onResize(ev));
         window.addEventListener("pointermove", (ev) => this.onPointerMove(ev));
         //Todo: test touchscreen
-        window.addEventListener("pointerdown", (ev) => this.onPointerMove(ev));
+        window.addEventListener("pointerdown", (ev) => this.onClick(ev));
 
         this.callbacks = [];
+    }
+
+    public setRoomManager(roomManager: RoomManager)
+    {
+        this.roomManager = roomManager;
     }
 
     private onResize(event: UIEvent)
     {
         let smallestValue = Math.min(window.innerHeight, window.innerWidth);
         this.renderer.setSize( smallestValue, smallestValue );
+    }
+
+    private onClick(event: PointerEvent)
+    {
+        this.onPointerMove(event);
+        
+        if(this.hoveringObject != null)
+        {
+            this.hoveringObject.dispatchEvent({type:'onclick'});
+        }
     }
 
     private onPointerMove(event: PointerEvent ) 
@@ -87,9 +106,29 @@ export class Renderer
         if(this.raycaster)
         {
             this.raycaster.setFromCamera(this.pointer, this.camera);
-            const intersecting = this.raycaster.intersectObjects( this.scene.children );
             
-            const newHoveringObject = intersecting.length > 0 ? intersecting[0].object : null;
+            let newHoveringObject: Clickable|null = null;
+            if(this.roomManager)
+            {
+                for(let room of this.roomManager.getInteractableRooms())
+                {
+                    if(!room.isVisible) continue;
+
+                    for(let clickable of room.clickables)
+                    {
+                        let collisionBox = clickable.getCollisionBox();
+                        if(collisionBox != null && this.raycaster.ray.intersectsBox(collisionBox))
+                        {
+                            newHoveringObject = clickable;
+                            break;
+                        }
+                    }
+
+                    if(newHoveringObject != null)
+                        break;
+                }
+            }
+
             if(this.hoveringObject != newHoveringObject)
             {
                 if(this.hoveringObject != null)
@@ -101,30 +140,6 @@ export class Renderer
                     newHoveringObject.dispatchEvent({type:'onhoverstart'});
                 }
                 this.hoveringObject = newHoveringObject;
-            }
-            let newHoveringGroup: THREE.Group | null = null;
-            if(newHoveringObject)
-            {
-                newHoveringObject.traverseAncestors((obj) => {
-                    if(newHoveringGroup == null)
-                    {
-                        let group = obj as THREE.Group;
-                        if(group && group.isGroup)
-                            newHoveringGroup = group;
-                    }
-                });
-            }
-            if(this.hoveringGroup != newHoveringGroup)
-            {
-                if(this.hoveringGroup != null)
-                {
-                    this.hoveringGroup.dispatchEvent({type:'onhoverstop'});
-                }
-                if(newHoveringGroup != null)
-                {
-                    (newHoveringGroup as THREE.Group).dispatchEvent({type:'onhoverstart'});
-                }
-                this.hoveringGroup = newHoveringGroup;
             }
         }
 

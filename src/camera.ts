@@ -83,11 +83,11 @@ export class Camera
         else
         {
             var targetMatrix = new THREE.Matrix4();
-            targetMatrix.lookAt(targetPosition, new THREE.Vector3(0,0,0), new THREE.Vector3(0,1,0));
+            targetMatrix.lookAt(targetPosition, new THREE.Vector3(0,0.6,0), new THREE.Vector3(0,1,0));
 
             this.targetPosition.copy(targetPosition);
             this.targetRotation.setFromRotationMatrix(targetMatrix);
-            this.targetZoom = 1.3;
+            this.targetZoom = 1.34;
         }
     }
     

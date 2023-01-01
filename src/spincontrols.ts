@@ -118,6 +118,8 @@ export class SpinControls extends EventDispatcher<SpinChangedEvent> {
 
     public update()
     {
+        if(!this.enabled) return;
+        
         const twoPI = 2 * Math.PI;
     
         if ( this.enableDamping ) 
